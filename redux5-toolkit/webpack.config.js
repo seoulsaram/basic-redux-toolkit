@@ -2,7 +2,7 @@ const path = require('path');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = {
-  name: 'react-redux',
+  name: 'react-redux-toolkit',
   mode: 'development',
   devtool: 'eval',
   resolve: {

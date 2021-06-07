@@ -1,13 +1,6 @@
-import {createStore, compose, applyMiddleware} from 'redux';
-import {composeWithDevTools} from 'redux-devtools-extension';
-import addPost from './actions/post';
-import {logIn, logOut} from './actions/user';
-import reducer from './reducers/reducers';
+import {configureStore, getDefaultMiddleware} from '@reduxjs/toolkit';
 
-const initialState = {
-  user: {isLoggingIn: false, data: null},
-  posts: [],
-};
+import reducer from './reducers/reducers';
 
 //createStore함수의 인자 1. reducer, 2. initialState, 3.enhancer
 const firstMiddleWare = (store) => (dispatch) => (action) => {
@@ -17,19 +10,13 @@ const firstMiddleWare = (store) => (dispatch) => (action) => {
   //기능추가
   console.log('액션 끝');
 };
-const thunkMiddleware = (store) => (dispatch) => (action) => {
-  if (typeof action === 'function') {
-    return action(store.dispatch, store.getState);
-    //이게 어디로 전달되냐면 action으로 전달되는것임.
-  }
-  return dispatch(action);
-};
 
-const enhancer =
-  process.env.NODE_ENV === 'production'
-    ? compose(applyMiddleware(firstMiddleWare, thunkMiddleware))
-    : composeWithDevTools(applyMiddleware(firstMiddleWare, thunkMiddleware));
-
-const store = createStore(reducer, initialState, enhancer);
+//preloaddedState : initialState같은 것. 서버사이드 랜더링할 때 써주면 됨
+//getDefaultMiddleware : 미들웨어를 넣어줄 때 이걸 사용하지 않으면, toolkit에서 기본으로 제공하는 미들웨어가 제외되어버리므로 사용함.
+const store = configureStore({
+  reducer,
+  middleware: [firstMiddleWare, ...getDefaultMiddleware()],
+  devTools: process.env.NODE_ENV !== 'production',
+});
 
 export default store;
